@@ -1,0 +1,33 @@
+{
+  "name": "ambit",
+  "description": "Date parser that returns a range instead of a single value",
+  "version": "0.0.0",
+  "author": "Michael Garvin <gar@comrade.us>",
+  "bugs": {
+    "url": "https://github.com/wraithgar/date-range-parser/issues"
+  },
+  "dependencies": {
+    "jshint": "^2.5.1",
+    "moment": "^2.7.0"
+  },
+  "devDependencies": {
+    "precommit-hook": "^1.0.2"
+  },
+  "homepage": "https://github.com/wraithgar/ambit",
+  "keywords": [
+    "date",
+    "parse",
+    "range",
+    "node",
+    "commonjs"
+  ],
+  "license": "MIT",
+  "main": "ambit.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wraithgar/date-range-parser.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
