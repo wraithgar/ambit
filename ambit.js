@@ -9,6 +9,7 @@ moment.createFromInputFallback = function (config) {
     config._d = new Date(config._i);
 };
 
+//TODO http://www.willbell.com/math/mc1.htm or view-source:https://stellafane.org/misc/equinox.html
 var SEASONS = {
     spring: [2, 20, 0, 5, 19, 0],
     summer: [5, 20, 0, 8, 23, 0],
@@ -22,46 +23,50 @@ var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oc
 var YEAR_MATCH = /^(20)?[0-9]{2}$/;
 
 function getSeason(now, season, year) {
-    var startDate, endDate;
+    var start, end;
     var boundaries = SEASONS[season];
     if (!year) {
         year = new Date().getFullYear();
-        endDate = new Date(Number(year) + boundaries[5], boundaries[3], boundaries[4]);
-        if (endDate <= now) {
+        end = new Date(Number(year) + boundaries[5], boundaries[3], boundaries[4]);
+        if (end <= now) {
             year = year + 1;
         }
     }
-    startDate = new Date(Number(year) + boundaries[2], boundaries[0], boundaries[1]);
-    endDate = new Date(Number(year) + boundaries[5], boundaries[3], boundaries[4]);
+    start = moment(new Date(Number(year) + boundaries[2], boundaries[0], boundaries[1]));
+    end = moment(new Date(Number(year) + boundaries[5], boundaries[3], boundaries[4])).add('days', 1).subtract('seconds', 1);
     return {
-        startDate: moment(startDate).format('MM-DD-YYYY'),
-        endDate: moment(endDate).format('MM-DD-YYYY')
+        start: start,
+        end: end
     };
 }
 
 function parseYear(tokens) {
-    var startDate, endDate, year;
-    tokens.forEach(function findYear(token) {
+    var start, end, year, yearIndex;
+    tokens.forEach(function findYear(token, index) {
         if (token.match(YEAR_MATCH)) {
+            yearIndex = index;
             year = token;
         }
     });
     if (!year) {
         return;
     }
+    if (yearIndex + 1 !== tokens.length) { //Year must be the last thing or else we stop
+        return;
+    }
     if (year < 100) {
         year = Number(year) + 2000;
     }
-    startDate = new Date(Number(year), 0, 1);
-    endDate = new Date(Number(year), 11, 31);
+    start = moment(new Date(Number(year), 0, 1));
+    end = moment(new Date(Number(year), 11, 31)).add('days', 1).subtract('seconds', 1);
     return {
-        startDate: moment(startDate).format('MM-DD-YYYY'),
-        endDate: moment(endDate).format('MM-DD-YYYY')
+        start: start,
+        end: end
     };
 }
 
 function parseMonth(tokens, now) {
-    var parsed, startDate, endDate, monthIndex, month, year;
+    var parsed, start, end, monthIndex, month, year, yearIndex;
     tokens.forEach(function findMonth(token, index) {
         var found = MONTHS.indexOf(token.slice(0, 3));
         if (found > -1) {
@@ -75,15 +80,17 @@ function parseMonth(tokens, now) {
     if (tokens.length === monthIndex + 1) {
         //If the month was the last thing we try to guess the year
         year = new Date().getFullYear();
-        endDate = new Date(Number(year), month);
-        if (endDate <= now) {
+        end = new Date(Number(year), month);
+        if (end <= now) {
             year = year + 1;
         }
+        yearIndex = tokens.length - 1;
     } else {
         //Otherwise we try to find it in our tokens
-        tokens.forEach(function findYear(token) {
+        tokens.forEach(function findYear(token, index) {
             if (token.match(YEAR_MATCH)) {
                 year = token;
+                yearIndex = index;
                 if (year < 100) {
                     year = Number(year) + 2000;
                 }
@@ -93,16 +100,19 @@ function parseMonth(tokens, now) {
     if (!year) {
         return;
     }
-    startDate = new Date(Number(year), month);
-    endDate = moment(startDate).add('months', 1).subtract('days', 1);
+    if (yearIndex + 1 !== tokens.length) { //Year must be the last thing or else we stop
+        return;
+    }
+    start = moment(new Date(Number(year), month));
+    end = moment(start).add('months', 1).subtract('seconds', 1);
     parsed = {
-        startDate: moment(startDate).format('MM-DD-YYYY'),
-        endDate: moment(endDate).format('MM-DD-YYYY')
+        start: start,
+        end: end
     };
     return parsed;
 }
 
-function parseSeasons(tokens, now) {
+function parseSeason(tokens, now) {
     var parsed, season, seasonIndex, year;
     tokens.forEach(function findSeason(token, index) {
         var found = Object.keys(SEASONS).indexOf(token);
@@ -133,27 +143,24 @@ function parseSeasons(tokens, now) {
 }
 
 function parseDate(tokens) {
-    var dateString = tokens.join(' ');
-    dateString = moment(dateString).format('MM-DD-YYYY');
-    if (dateString === 'Invalid date') {
+    var parsed = {};
+    parsed.start = moment(tokens.join(' '));
+    if (parsed.start.toJSON() === 'Invalid date') {
         return;
     }
-    return {
-        startDate: dateString,
-        endDate: dateString
-    };
+    parsed.end = parsed.start.add('days', 1).subtract('seconds', 1);
+    return parsed;
 }
 
 function tryAll(tokens, now) {
-    return parseSeasons(tokens, now) ||
+    return parseSeason(tokens, now) ||
         parseMonth(tokens, now) ||
         parseYear(tokens, now) ||
         parseDate(tokens); //parseDate always last
 }
 
 //TODO "Oct to Sep" for example needs to know sep is the year after
-//TODO format parameter
-moment.ambit = function ambit(str) {
+moment.ambit = function ambit(str, format) {
     var result, startRange, endRange;
     //var now = new Date();
     var tokens = str.trim().toLowerCase().split(/[,\s]+/);
@@ -181,11 +188,15 @@ moment.ambit = function ambit(str) {
     endRange = tryAll(tokens);
     if (startRange) {
         result = {
-            startDate: startRange.startDate,
-            endDate: startRange.endDate
+            start: startRange.start,
+            end: startRange.end
         };
         if (endRange) {
-            result.endDate = endRange.endDate;
+            result.end = endRange.end;
+        }
+        if (format) {
+            result.start = result.start.format(format);
+            result.end = result.end.format(format);
         }
         return result;
     }

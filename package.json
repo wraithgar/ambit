@@ -11,6 +11,7 @@
     "moment": "^2.7.0"
   },
   "devDependencies": {
+    "lab": "^3.2.1",
     "precommit-hook": "^1.0.2"
   },
   "homepage": "https://github.com/wraithgar/ambit",
@@ -28,6 +29,6 @@
     "url": "git://github.com/wraithgar/date-range-parser.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "make test"
   }
 }
