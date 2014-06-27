@@ -40,71 +40,50 @@ function getSeason(now, season, year) {
     };
 }
 
+//Very specific parser for tokens only ending in a year and nothing else
 function parseYear(tokens) {
-    var start, end, year, yearIndex;
-    tokens.forEach(function findYear(token, index) {
-        if (token.match(YEAR_MATCH)) {
-            yearIndex = index;
-            year = token;
-        }
-    });
-    if (!year) {
-        return;
-    }
-    if (yearIndex + 1 !== tokens.length) { //Year must be the last thing or else we stop
+    var result, start, end, year;
+    year = tokens.slice(-1)[0];
+    if (!year || !year.match(YEAR_MATCH)) {
         return;
     }
     if (year < 100) {
         year = Number(year) + 2000;
     }
     start = moment(new Date(Number(year), 0, 1));
-    end = moment(new Date(Number(year), 11, 31)).add('days', 1).subtract('seconds', 1);
-    return {
+    end = moment(start).add('years', 1).subtract('seconds', 1);
+    result = {
         start: start,
         end: end
     };
+    return result;
 }
 
+//Very specific parser for tokens ending in either a month or a month/year
 function parseMonth(tokens, now) {
-    var parsed, start, end, monthIndex, month, year, yearIndex;
-    tokens.forEach(function findMonth(token, index) {
-        var found = MONTHS.indexOf(token.slice(0, 3));
-        if (found > -1) {
-            month = found;
-            monthIndex = index;
+    var parsed, start, end, month, year, afterNow;
+    //The last needs to be a month or a month/year
+    year = tokens.slice(-1)[0];
+    if (year.match(YEAR_MATCH)) {
+        month = tokens.slice(-2)[0];
+        if (year < 100) {
+            year = year + 2000;
         }
-    });
-    if (!month) {
-        return;
-    }
-    if (tokens.length === monthIndex + 1) {
-        //If the month was the last thing we try to guess the year
-        year = new Date().getFullYear();
-        end = new Date(Number(year), month);
-        if (end <= now) {
-            year = year + 1;
-        }
-        yearIndex = tokens.length - 1;
+        afterNow = true;
     } else {
-        //Otherwise we try to find it in our tokens
-        tokens.forEach(function findYear(token, index) {
-            if (token.match(YEAR_MATCH)) {
-                year = token;
-                yearIndex = index;
-                if (year < 100) {
-                    year = Number(year) + 2000;
-                }
-            }
-        });
+        month = String(year);
+        year = new Date().getFullYear();
     }
-    if (!year) {
-        return;
-    }
-    if (yearIndex + 1 !== tokens.length) { //Year must be the last thing or else we stop
+    month = MONTHS.indexOf(month.slice(0, 3));
+    if (month === -1) {
         return;
     }
     start = moment(new Date(Number(year), month));
     end = moment(start).add('months', 1).subtract('seconds', 1);
+    if (end <= now) {
+        start.add('years', 1);
+        end.add('years', 1);
+    }
     parsed = {
         start: start,
         end: end
@@ -168,7 +147,7 @@ moment.ambit = function ambit(str, format) {
     var current = [];
     var lastAttempt, currentAttempt;
 
-    //Come at it left to right
+    //Come at it left to right, once we've parsed something wait till we get an error then back up one (assumes the error was from separator language)
     while (direction === 'right' && tokens.length > 0) {
         current.push(tokens.shift());
         currentAttempt = tryAll(current);
@@ -184,8 +163,15 @@ moment.ambit = function ambit(str, format) {
             }
         }
     }
-    current = [];
-    endRange = tryAll(tokens);
+    //We go till our first match and that's that
+    while (direction !== 'done' && tokens.length > 0) {
+        endRange = tryAll(tokens);
+        if (endRange) {
+            direction = 'done';
+        } else {
+            endRange.shift();
+        }
+    }
     if (startRange) {
         result = {
             start: startRange.start,

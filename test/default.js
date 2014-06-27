@@ -37,4 +37,10 @@ Lab.experiment('default tests', function () {
         Lab.expect(result.end.toDate().getTime(), 'end date').to.equal(ambit(result.start).add('month', 6).subtract('seconds', 1).toDate().getTime());
         done();
     });
+    Lab.test('Formatting', function (done) {
+        var result = ambit.ambit('march 12, 2005', 'YYYY-MM-DD');
+        Lab.expect(result, 'parsed year').to.include.keys('start', 'end');
+        Lab.expect(result.start).to.equal('2005-03-12');
+        done();
+    });
 });
