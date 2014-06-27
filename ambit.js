@@ -43,6 +43,18 @@ function getSeason(now, season, year) {
 //Very specific parser for tokens only ending in a year and nothing else
 function parseYear(tokens) {
     var result, start, end, year;
+    tokens.forEach(function findSeason(token) {
+        if (Object.keys(SEASONS).indexOf(token) > -1) {
+            result = true;
+        }
+        if (MONTHS.indexOf(token.slice(0, 3)) > -1) {
+            result = true;
+        }
+    });
+    if (result) {
+        return; //Let date parser try it next
+    }
+    //Make sure it doesn't have a season or month in it
     year = tokens.slice(-1)[0];
     if (!year || !year.match(YEAR_MATCH)) {
         return;
@@ -127,7 +139,7 @@ function parseDate(tokens) {
     if (parsed.start.toJSON() === 'Invalid date') {
         return;
     }
-    parsed.end = parsed.start.add('days', 1).subtract('seconds', 1);
+    parsed.end = moment(parsed.start).add('days', 1).subtract('seconds', 1);
     return parsed;
 }
 
