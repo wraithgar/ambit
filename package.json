@@ -1,7 +1,7 @@
 {
   "name": "ambit",
   "description": "Date parser that returns a range instead of a single value",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Michael Garvin <gar@comrade.us>",
   "bugs": {
     "url": "https://github.com/wraithgar/date-range-parser/issues"
