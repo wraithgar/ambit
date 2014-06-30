@@ -1,4 +1,5 @@
 var moment = require('moment');
+var seasonDate = require('./season');
 
 /*
  * Remove deprication warning since we're literally in the one
@@ -9,13 +10,12 @@ moment.createFromInputFallback = function (config) {
     config._d = new Date(config._i);
 };
 
-//TODO http://www.willbell.com/math/mc1.htm or view-source:https://stellafane.org/misc/equinox.html
 var SEASONS = {
-    spring: [2, 20, 0, 5, 19, 0],
-    summer: [5, 20, 0, 8, 23, 0],
-    fall: [8, 23, 0, 11, 21, 0],
-    autumn: [8, 23, 0, 11, 21, 0],
-    winter: [11, 21, 0, 2, 19, 1]
+    spring: 0,
+    summer: 1,
+    fall: 2,
+    autumn: 2,
+    winter: 3
 };
 
 var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -23,17 +23,24 @@ var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oc
 var YEAR_MATCH = /^(20)?[0-9]{2}$/;
 
 function getSeason(now, season, year) {
-    var start, end;
-    var boundaries = SEASONS[season];
+    var start, end, guessYear, endSeason, endYear;
+    endSeason = season + 1;
+    endYear = year;
+    if (endSeason == 4) {
+        endYear = endYear + 1;
+    }
     if (!year) {
         year = new Date().getFullYear();
-        end = new Date(Number(year) + boundaries[5], boundaries[3], boundaries[4]);
-        if (end <= now) {
-            year = year + 1;
-        }
+        guessYear = true;
     }
-    start = moment(new Date(Number(year) + boundaries[2], boundaries[0], boundaries[1]));
-    end = moment(new Date(Number(year) + boundaries[5], boundaries[3], boundaries[4])).add('days', 1).subtract('seconds', 1);
+    end = moment(seasonDate(endSeason, endYear));
+    if (end <= now) {
+        end = moment(seasonDate(endSeason, endYear + 1));
+        year = year + 1;
+
+    }
+    start = moment(seasonDate(season, year));
+    end.subtract('seconds', 1);
     return {
         start: start,
         end: end
@@ -73,17 +80,17 @@ function parseYear(tokens) {
 
 //Very specific parser for tokens ending in either a month or a month/year
 function parseMonth(tokens, now) {
-    var parsed, start, end, month, year, afterNow;
-    //The last needs to be a month or a month/year
+    var parsed, start, end, month, year;
+    //Needs to end in a month or a month/year
     year = tokens.slice(-1)[0];
     if (year.match(YEAR_MATCH)) {
         month = tokens.slice(-2)[0];
         if (year < 100) {
             year = year + 2000;
         }
-        afterNow = true;
     } else {
-        month = String(year);
+        //month = String(year);
+        month = year;
         year = new Date().getFullYear();
     }
     month = MONTHS.indexOf(month.slice(0, 3));
@@ -104,33 +111,25 @@ function parseMonth(tokens, now) {
 }
 
 function parseSeason(tokens, now) {
-    var parsed, season, seasonIndex, year;
-    tokens.forEach(function findSeason(token, index) {
-        var found = Object.keys(SEASONS).indexOf(token);
-        if (found > -1) {
-            season = token;
-            seasonIndex = index;
+    var parsed, season, year;
+    console.log('parseSeason', tokens);
+    //Needs to end in a season or a season/year
+    year = tokens.slice(-1)[0];
+    if (year.match(YEAR_MATCH)) {
+        season = tokens.slice(-2)[0];
+        if (year < 100) {
+            year = year + 2000;
         }
-    });
-    if (!season) {
+    } else {
+        season = year;
+        year = new Date().getFullYear();
+    }
+    season = SEASONS[season];
+    if (season === undefined) {
         return;
     }
-    if (tokens.length !== seasonIndex + 1) {
-        //If the season wasn't the last thing we try to find it
-        tokens.forEach(function findYear(token) {
-            if (token.match(YEAR_MATCH)) {
-                year = token;
-                if (year < 100) {
-                    year = Number(year) + 2000;
-                }
-            }
-        });
-        if (!year) {
-            return;
-        }
-    }
     parsed = getSeason(now, season, year);
-    return getSeason(now, season, year);
+    return parsed;
 }
 
 function parseDate(tokens) {
