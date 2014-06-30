@@ -35,11 +35,12 @@ function getSeason(now, season, year) {
         guessYear = true;
     }
     end = moment(seasonDate(endSeason, endYear));
-    if (guessYear && end <= now) {
-        end = moment(seasonDate(endSeason, endYear + 1));
-        year = year + 1;
+    //Eventually need to pass now properly
+    //if (guessYear && end <= now) {
+        //end = moment(seasonDate(endSeason, endYear + 1));
+        //year = year + 1;
 
-    }
+    //}
     start = moment(seasonDate(season, year));
     end.subtract('seconds', 1);
     return {
