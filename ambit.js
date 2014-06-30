@@ -27,14 +27,15 @@ function getSeason(now, season, year) {
     endSeason = season + 1;
     endYear = year;
     if (endSeason == 4) {
-        endYear = endYear + 1;
+        endSeason = 0;
+        endYear = Number(endYear) + 1;
     }
     if (!year) {
         year = new Date().getFullYear();
         guessYear = true;
     }
     end = moment(seasonDate(endSeason, endYear));
-    if (end <= now) {
+    if (guessYear && end <= now) {
         end = moment(seasonDate(endSeason, endYear + 1));
         year = year + 1;
 
@@ -89,7 +90,6 @@ function parseMonth(tokens, now) {
             year = year + 2000;
         }
     } else {
-        //month = String(year);
         month = year;
         year = new Date().getFullYear();
     }
@@ -112,7 +112,6 @@ function parseMonth(tokens, now) {
 
 function parseSeason(tokens, now) {
     var parsed, season, year;
-    console.log('parseSeason', tokens);
     //Needs to end in a season or a season/year
     year = tokens.slice(-1)[0];
     if (year.match(YEAR_MATCH)) {
