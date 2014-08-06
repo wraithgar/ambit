@@ -41,15 +41,15 @@ Lab.experiment('default tests', function () {
     Lab.test('Season with year', function (done) {
         var result = ambit.ambit('Spring 2005');
         Lab.expect(result, 'parsed year').to.include.keys('start', 'end');
-        Lab.expect(result.start.format('YYYY-MM-DD HH:mm:ss'), 'start date').to.equal('2005-03-20 12:34:52');
-        Lab.expect(result.end.format('YYYY-MM-DD HH:mm:ss'), 'end date').to.equal('2005-06-21 06:38:14');
+        Lab.expect(result.start.format('YYYY-MM-DD'), 'start date').to.equal('2005-03-20');
+        Lab.expect(result.end.format('YYYY-MM-DD'), 'end date').to.equal('2005-06-21');
         done();
     });
     Lab.test('Season crossing year boundary', function (done) {
         var result = ambit.ambit('Winter 2005');
         Lab.expect(result, 'parsed year').to.include.keys('start', 'end');
-        Lab.expect(result.start.format('YYYY-MM-DD HH:mm:ss'), 'start date').to.equal('2005-12-21 18:40:34');
-        Lab.expect(result.end.format('YYYY-MM-DD HH:mm:ss'), 'end date').to.equal('2006-03-20 18:19:07');
+        Lab.expect(result.start.format('YYYY-MM-DD'), 'start date').to.equal('2005-12-21');
+        Lab.expect(result.end.format('YYYY-MM-DD'), 'end date').to.equal('2006-03-20');
         done();
     });
     Lab.test('Formatting', function (done) {

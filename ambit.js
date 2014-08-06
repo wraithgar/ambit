@@ -1,5 +1,5 @@
 var moment = require('moment');
-var seasonDate = require('./season');
+var moonbeams = require('moonbeams');
 
 /*
  * Remove deprication warning since we're literally in the one
@@ -23,7 +23,7 @@ var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oc
 var YEAR_MATCH = /^(20)?[0-9]{2}$/;
 
 function getSeason(now, season, year) {
-    var start, end, guessYear, endSeason, endYear;
+    var start, end, guessYear, endSeason, endYear, cal, hms;
     endSeason = season + 1;
     endYear = year;
     if (endSeason == 4) {
@@ -34,14 +34,18 @@ function getSeason(now, season, year) {
         year = new Date().getFullYear();
         guessYear = true;
     }
-    end = moment(seasonDate(endSeason, endYear));
+    cal = moonbeams.jdToCalendar(moonbeams.season(endSeason, endYear));
+    hms = moonbeams.dayToHms(cal.day);
+    end = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
     //Eventually need to pass now properly
     //if (guessYear && end <= now) {
         //end = moment(seasonDate(endSeason, endYear + 1));
         //year = year + 1;
 
     //}
-    start = moment(seasonDate(season, year));
+    cal = moonbeams.jdToCalendar(moonbeams.season(season, year));
+    hms = moonbeams.dayToHms(cal.day);
+    start = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
     end.subtract('seconds', 1);
     return {
         start: start,
