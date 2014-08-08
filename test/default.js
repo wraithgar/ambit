@@ -90,4 +90,24 @@ Lab.experiment('default tests', function () {
         Lab.expect(result.start).to.equal('2005-03-12');
         done();
     });
+    Lab.test('Month day', function (done) {
+        var result = ambit.ambit('may 12');
+        Lab.expect(result, 'parsed month day').to.include.keys('start', 'end');
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(12);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(4);
+        Lab.expect(result.end.date(), 'parsed day end').to.equal(12);
+        Lab.expect(result.end.month(), 'parsed month end').to.equal(4);
+        done();
+    });
+    Lab.test('Month \'year', function (done) {
+        var result = ambit.ambit('may \'12');
+        Lab.expect(result, 'parsed month day').to.include.keys('start', 'end');
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(1);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(4);
+        Lab.expect(result.start.year(), 'parsed year start').to.equal(2012);
+        Lab.expect(result.end.date(), 'parsed day end').to.equal(31);
+        Lab.expect(result.end.month(), 'parsed month end').to.equal(4);
+        Lab.expect(result.end.year(), 'parsed year end').to.equal(2012);
+        done();
+    });
 });

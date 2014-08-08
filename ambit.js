@@ -20,7 +20,7 @@ var SEASONS = {
 
 var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
-var YEAR_MATCH = /^(20)?[0-9]{2}$/;
+var YEAR_MATCH = /^(20|')?[0-9]{2}$/;
 
 function getSeason(now, season, year, guessYear) {
     var start, end, endSeason, endYear, cal, hms;
@@ -80,15 +80,36 @@ function parseYear(tokens) {
     return result;
 }
 
-//Very specific parser for tokens ending in either a month or a month/year
+//Actual month/day parser
+function monthDay(month, day, now) {
+    var start, end;
+    var year = new Date().getFullYear();
+    month = MONTHS.indexOf(month.slice(0, 3));
+    start = moment(new Date(year, month, day));
+    if (start.date() !== Number(day)) {
+        return;
+    }
+    end = moment(start).add('days', 1).subtract('seconds', 1);
+    if (end <= now) {
+        start.add('years', 1);
+        end.add('years', 1);
+    }
+    return {start: start, end: end};
+}
+
+//Very specific parser for tokens ending in either a month or a month/year or month/day
 function parseMonth(tokens, now) {
     var parsed, start, end, month, year, guessYear;
-    //Needs to end in a month or a month/year
     year = tokens.slice(-1)[0];
     if (year.match(YEAR_MATCH)) {
         month = tokens.slice(-2)[0];
+        if (year[0] === '\'') {
+            year = year.slice(1);
+        } else if (String(Number(year)) === year && year < 32) {
+            return monthDay(month, year, now);
+        }
         if (year < 100) {
-            year = year + 2000;
+            year = Number(year) + 2000;
         }
     } else {
         month = year;
