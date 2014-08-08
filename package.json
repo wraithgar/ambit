@@ -4,7 +4,7 @@
   "version": "0.1.3",
   "author": "Michael Garvin <gar@comrade.us>",
   "bugs": {
-    "url": "https://github.com/wraithgar/date-range-parser/issues"
+    "url": "https://github.com/wraithgar/ambit/issues"
   },
   "dependencies": {
     "moment": "^2.7.0",
@@ -20,14 +20,13 @@
     "date",
     "parse",
     "range",
-    "node",
-    "commonjs"
+    "moment"
   ],
   "license": "MIT",
   "main": "ambit.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/wraithgar/date-range-parser.git"
+    "url": "git://github.com/wraithgar/ambit.git"
   },
   "scripts": {
     "test": "make test"
