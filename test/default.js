@@ -52,6 +52,38 @@ Lab.experiment('default tests', function () {
         Lab.expect(result.end.format('YYYY-MM-DD'), 'end date').to.equal('2006-03-20');
         done();
     });
+    Lab.test('Months', function (done) {
+        var months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+        months.forEach(function (month) {
+            var result = ambit.ambit(month);
+            Lab.expect(result, 'parsed month ' + month).to.include.keys('start', 'end');
+            Lab.expect(result.start, 'start of ' + month).to.be.below(result.end, 'end of ' + month);
+            Lab.expect(result.end, 'end of ' + month).to.be.above(new Date(), 'now');
+        });
+        done();
+    });
+    Lab.test('Months that are backwards', function (done) {
+        var result = ambit.ambit('oct to sep');
+        Lab.expect(result, 'parsed months').to.include.keys('start', 'end');
+        Lab.expect(result.start, 'oct').to.be.below(result.end,'sep');
+        done();
+    });
+    Lab.test('Seasons', function (done) {
+        var seasons = ['spring', 'summer', 'fall', 'autumn', 'winter'];
+        seasons.forEach(function (season) {
+            var result = ambit.ambit(season);
+            Lab.expect(result, 'parsed season ' + season).to.include.keys('start', 'end');
+            Lab.expect(result.start, 'start of ' + season).to.be.below(result.end, 'end of ' + season);
+            Lab.expect(result.end, 'end date of ' + season).to.be.above(new Date(), 'now');
+        });
+        done();
+    });
+    Lab.test('Season w/o year crossing year boundary', function (done) {
+        var result = ambit.ambit('Winter');
+        Lab.expect(result, 'parsed season').to.include.keys('start', 'end');
+        Lab.expect(result.end, 'end').to.be.above(result.start, 'start');
+        done();
+    });
     Lab.test('Formatting', function (done) {
         var result = ambit.ambit('march 12, 2005', 'YYYY-MM-DD');
         Lab.expect(result, 'parsed year').to.include.keys('start', 'end');

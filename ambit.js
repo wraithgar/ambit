@@ -22,27 +22,23 @@ var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oc
 
 var YEAR_MATCH = /^(20)?[0-9]{2}$/;
 
-function getSeason(now, season, year) {
-    var start, end, guessYear, endSeason, endYear, cal, hms;
+function getSeason(now, season, year, guessYear) {
+    var start, end, endSeason, endYear, cal, hms;
     endSeason = season + 1;
     endYear = year;
     if (endSeason == 4) {
         endSeason = 0;
         endYear = Number(endYear) + 1;
     }
-    if (!year) {
-        year = new Date().getFullYear();
-        guessYear = true;
-    }
     cal = moonbeams.jdToCalendar(moonbeams.season(endSeason, endYear));
     hms = moonbeams.dayToHms(cal.day);
     end = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
-    //Eventually need to pass now properly
-    //if (guessYear && end <= now) {
-        //end = moment(seasonDate(endSeason, endYear + 1));
-        //year = year + 1;
-
-    //}
+    if (guessYear && end <= now) {
+        cal = moonbeams.jdToCalendar(moonbeams.season(endSeason, endYear + 1));
+        hms = moonbeams.dayToHms(cal.day);
+        end = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+        year = year + 1;
+    }
     cal = moonbeams.jdToCalendar(moonbeams.season(season, year));
     hms = moonbeams.dayToHms(cal.day);
     start = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
@@ -86,7 +82,7 @@ function parseYear(tokens) {
 
 //Very specific parser for tokens ending in either a month or a month/year
 function parseMonth(tokens, now) {
-    var parsed, start, end, month, year;
+    var parsed, start, end, month, year, guessYear;
     //Needs to end in a month or a month/year
     year = tokens.slice(-1)[0];
     if (year.match(YEAR_MATCH)) {
@@ -97,6 +93,7 @@ function parseMonth(tokens, now) {
     } else {
         month = year;
         year = new Date().getFullYear();
+        guessYear = true;
     }
     month = MONTHS.indexOf(month.slice(0, 3));
     if (month === -1) {
@@ -104,7 +101,7 @@ function parseMonth(tokens, now) {
     }
     start = moment(new Date(Number(year), month));
     end = moment(start).add('months', 1).subtract('seconds', 1);
-    if (end <= now) {
+    if (guessYear && end <= now) {
         start.add('years', 1);
         end.add('years', 1);
     }
@@ -116,7 +113,7 @@ function parseMonth(tokens, now) {
 }
 
 function parseSeason(tokens, now) {
-    var parsed, season, year;
+    var parsed, season, year, guessYear;
     //Needs to end in a season or a season/year
     year = tokens.slice(-1)[0];
     if (year.match(YEAR_MATCH)) {
@@ -127,12 +124,13 @@ function parseSeason(tokens, now) {
     } else {
         season = year;
         year = new Date().getFullYear();
+        guessYear = true;
     }
     season = SEASONS[season];
     if (season === undefined) {
         return;
     }
-    parsed = getSeason(now, season, year);
+    parsed = getSeason(now, season, year, guessYear);
     return parsed;
 }
 
@@ -153,10 +151,9 @@ function tryAll(tokens, now) {
         parseDate(tokens); //parseDate always last
 }
 
-//TODO "Oct to Sep" for example needs to know sep is the year after
 moment.ambit = function ambit(str, format) {
     var result, startRange, endRange;
-    //var now = new Date();
+    var now = new Date();
     var tokens = str.trim().toLowerCase().split(/[,\s]+/);
     var direction = 'right';
     var current = [];
@@ -165,7 +162,7 @@ moment.ambit = function ambit(str, format) {
     //Come at it left to right, once we've parsed something wait till we get an error then back up one (assumes the error was from separator language)
     while (direction === 'right' && tokens.length > 0) {
         current.push(tokens.shift());
-        currentAttempt = tryAll(current);
+        currentAttempt = tryAll(current, now);
         if (currentAttempt) {
             lastAttempt = currentAttempt;
             startRange = currentAttempt;
@@ -198,6 +195,10 @@ moment.ambit = function ambit(str, format) {
         if (format) {
             result.start = result.start.format(format);
             result.end = result.end.format(format);
+        }
+        //This should currently only happen w/ two un-yeared months
+        if (result.start > result.end) {
+            result.end = result.end.add('years', 1);
         }
         return result;
     }
