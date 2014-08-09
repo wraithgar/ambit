@@ -53,9 +53,6 @@ function getSeason(now, season, year, guessYear) {
 function parseYear(tokens) {
     var result, start, end, year;
     tokens.forEach(function findSeason(token) {
-        if (Object.keys(SEASONS).indexOf(token) > -1) {
-            result = true;
-        }
         if (MONTHS.indexOf(token.slice(0, 3)) > -1) {
             result = true;
         }
@@ -86,9 +83,6 @@ function monthDay(month, day, now) {
     var year = new Date().getFullYear();
     month = MONTHS.indexOf(month.slice(0, 3));
     start = moment(new Date(year, month, day));
-    if (start.date() !== Number(day)) {
-        return;
-    }
     end = moment(start).add('days', 1).subtract('seconds', 1);
     if (end <= now) {
         start.add('years', 1);
@@ -202,7 +196,7 @@ moment.ambit = function ambit(str, format) {
         if (endRange) {
             direction = 'done';
         } else {
-            endRange.shift();
+            tokens.pop();
         }
     }
     if (startRange) {

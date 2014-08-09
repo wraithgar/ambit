@@ -99,6 +99,28 @@ Lab.experiment('default tests', function () {
         Lab.expect(result.end.month(), 'parsed month end').to.equal(4);
         done();
     });
+    Lab.test('Month two digit year too big to be a day', function (done) {
+        var result = ambit.ambit('april 39');
+        Lab.expect(result, 'parsed month year').to.include.keys('start', 'end');
+        Lab.expect(result.start.year(), 'parsed year start').to.equal(2039);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(3);
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(1);
+        Lab.expect(result.end.year(), 'parsed year end').to.equal(2039);
+        Lab.expect(result.end.month(), 'parsed month end').to.equal(3);
+        Lab.expect(result.end.date(), 'parsed day end').to.equal(30);
+        done();
+    });
+    Lab.test('Month day to year', function (done) {
+        var now = new Date();
+        var year = now.getFullYear() + 1;
+        var result = ambit.ambit('may 12 to ' + year);
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(12);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(4);
+        Lab.expect(result.end.date(), 'parsed day end').to.equal(31);
+        Lab.expect(result.end.month(), 'parsed month end').to.equal(11);
+        Lab.expect(result.end.year(), 'parsed year end').to.equal(year);
+        done();
+    });
     Lab.test('Month \'year', function (done) {
         var result = ambit.ambit('may \'12');
         Lab.expect(result, 'parsed month day').to.include.keys('start', 'end');
@@ -108,6 +130,52 @@ Lab.experiment('default tests', function () {
         Lab.expect(result.end.date(), 'parsed day end').to.equal(31);
         Lab.expect(result.end.month(), 'parsed month end').to.equal(4);
         Lab.expect(result.end.year(), 'parsed year end').to.equal(2012);
+        done();
+    });
+    Lab.test('Full day', function (done) {
+        var result = ambit.ambit('March 12, 2001');
+        Lab.expect(result, 'parsed full day').to.include.keys('start', 'end');
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(12);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(2);
+        Lab.expect(result.start.year(), 'parsed year start').to.equal(2001);
+        done();
+    });
+    Lab.test('Full day to year', function (done) {
+        var result = ambit.ambit('September 14, 2002 to 2003');
+        Lab.expect(result, 'parsed full day').to.include.keys('start', 'end');
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(14);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(8);
+        Lab.expect(result.start.year(), 'parsed year start').to.equal(2002);
+        Lab.expect(result.end.date(), 'parsed day end').to.equal(31);
+        Lab.expect(result.end.month(), 'parsed month end').to.equal(11);
+        Lab.expect(result.end.year(), 'parsed year end').to.equal(2003);
+        done();
+    });
+    Lab.test('Nonsense', function (done) {
+        var result = ambit.ambit('first of tocember'); //Octember parses, sorry Dr Suess
+        Lab.expect(result).to.equal(undefined);
+        done();
+    });
+    Lab.test('Double ending', function (done) {
+        var result = ambit.ambit('2005 something something');
+        Lab.expect(result, 'double ending').to.include.keys('start', 'end');
+        Lab.expect(result.start.year(), 'parsed start year').to.equal(2005);
+        done();
+    });
+    Lab.test('Double separator', function (done) {
+        var result = ambit.ambit('2005 to, like 2007');
+        Lab.expect(result, 'double separator').to.include.keys('start', 'end');
+        Lab.expect(result.start.date(), 'parsed day start').to.equal(1);
+        Lab.expect(result.start.month(), 'parsed month start').to.equal(0);
+        Lab.expect(result.start.year(), 'parsed year start').to.equal(2005);
+        Lab.expect(result.end.date(), 'parsed end start').to.equal(31);
+        Lab.expect(result.end.month(), 'parsed end start').to.equal(11);
+        Lab.expect(result.end.year(), 'parsed end start').to.equal(2007);
+        done();
+    });
+    Lab.test('Empty string', function (done) {
+        var result = ambit.ambit('');
+        Lab.expect(result).to.equal(undefined);
         done();
     });
 });
