@@ -11,9 +11,12 @@
     "moonbeams": "^1.0.0"
   },
   "devDependencies": {
-    "jshint": "^2.5.1",
-    "lab": "^3.2.1",
-    "precommit-hook": "^1.0.2"
+    "code": "^2.0.1",
+    "eslint": "^1.10.3",
+    "eslint-config-andyet": "^1.0.0",
+    "eslint-plugin-hapi": "^4.0.0",
+    "git-validate": "^2.1.2",
+    "lab": "^8.0.0"
   },
   "homepage": "https://github.com/wraithgar/ambit",
   "keywords": [
@@ -29,6 +32,7 @@
     "url": "git://github.com/wraithgar/ambit.git"
   },
   "scripts": {
-    "test": "make test"
+    "test": "lab -L",
+    "lint": "eslint ."
   }
 }
