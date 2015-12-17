@@ -1,7 +1,6 @@
 {
   "name": "ambit",
   "description": "Date parser that returns a range instead of a single value",
-  "version": "1.1.2",
   "author": "Michael Garvin <gar@comrade.us>",
   "bugs": {
     "url": "https://github.com/wraithgar/ambit/issues"
@@ -16,7 +15,8 @@
     "eslint-config-andyet": "^1.0.0",
     "eslint-plugin-hapi": "^4.0.0",
     "git-validate": "^2.1.2",
-    "lab": "^8.0.0"
+    "lab": "^8.0.0",
+    "semantic-release": "^4.3.5"
   },
   "homepage": "https://github.com/wraithgar/ambit",
   "keywords": [
@@ -29,10 +29,11 @@
   "main": "ambit.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/wraithgar/ambit.git"
+    "url": "https://github.com/wraithgar/ambit.git"
   },
   "scripts": {
     "test": "lab -L",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   }
 }
