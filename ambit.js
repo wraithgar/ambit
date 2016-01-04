@@ -3,15 +3,15 @@
 // (c) 2014 Michael Garvin
 // Ambit may be freely distributed under the MIT license.
 //
-var moment = require('moment');
-var moonbeams = require('moonbeams');
+var Moment = require('moment');
+var Moonbeams = require('moonbeams');
 
 /*
  * Remove deprication warning since we're literally in the one
  * use case they describe as valid for doing this here:
  * https://github.com/moment/moment/issues/1407
  */
-moment.createFromInputFallback = function (config) {
+Moment.createFromInputFallback = function (config) {
 
   config._d = new Date(config._i);
 };
@@ -42,18 +42,18 @@ var getSeason = function getSeason (now, season, year, guessYear) {
     endSeason = 0;
     endYear = Number(endYear) + 1;
   }
-  cal = moonbeams.jdToCalendar(moonbeams.season(endSeason, endYear));
-  hms = moonbeams.dayToHms(cal.day);
-  end = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+  cal = Moonbeams.jdToCalendar(Moonbeams.season(endSeason, endYear));
+  hms = Moonbeams.dayToHms(cal.day);
+  end = Moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
   if (guessYear && end <= now) {
-    cal = moonbeams.jdToCalendar(moonbeams.season(endSeason, endYear + 1));
-    hms = moonbeams.dayToHms(cal.day);
-    end = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+    cal = Moonbeams.jdToCalendar(Moonbeams.season(endSeason, endYear + 1));
+    hms = Moonbeams.dayToHms(cal.day);
+    end = Moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
     year = year + 1;
   }
-  cal = moonbeams.jdToCalendar(moonbeams.season(season, year));
-  hms = moonbeams.dayToHms(cal.day);
-  start = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+  cal = Moonbeams.jdToCalendar(Moonbeams.season(season, year));
+  hms = Moonbeams.dayToHms(cal.day);
+  start = Moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
   end.subtract(1, 'seconds');
   return {
     start: start,
@@ -85,8 +85,8 @@ var parseYear = function parseYear (tokens) {
   if (year < 100) {
     year = Number(year) + 2000;
   }
-  start = moment(new Date(Number(year), 0, 1));
-  end = moment(start).add(1, 'years').subtract(1, 'seconds');
+  start = Moment(new Date(Number(year), 0, 1));
+  end = Moment(start).add(1, 'years').subtract(1, 'seconds');
   result = {
     start: start,
     end: end
@@ -99,8 +99,8 @@ var monthDay = function monthDay (month, day, now) {
 
   var year = new Date().getFullYear();
   month = MONTHS.indexOf(month.slice(0, 3));
-  var start = moment(new Date(year, month, day));
-  var end = moment(start).add(1, 'days').subtract(1, 'seconds');
+  var start = Moment(new Date(year, month, day));
+  var end = Moment(start).add(1, 'days').subtract(1, 'seconds');
   if (end <= now) {
     start.add(1, 'years');
     end.add(1, 'years');
@@ -139,8 +139,8 @@ var parseMonth = function parseMonth (tokens, now) {
   if (month === -1) {
     return;
   }
-  start = moment(new Date(Number(year), month));
-  end = moment(start).add(1, 'months').subtract(1, 'seconds');
+  start = Moment(new Date(Number(year), month));
+  end = Moment(start).add(1, 'months').subtract(1, 'seconds');
   if (guessYear && end <= now) {
     start.add(1, 'years');
     end.add(1, 'years');
@@ -182,11 +182,11 @@ var parseSeason = function parseSeason (tokens, now) {
 var parseDate = function parseDate (tokens) {
 
   var parsed = {};
-  parsed.start = moment(tokens.join(' '));
-  if (parsed.start.toJSON() === 'Invalid date') {
+  parsed.start = Moment(tokens.join(' '));
+  if (parsed.start.toJSON() === 'null') {
     return;
   }
-  parsed.end = moment(parsed.start).add(1, 'days').subtract(1, 'seconds');
+  parsed.end = Moment(parsed.start).add(1, 'days').subtract(1, 'seconds');
   return parsed;
 };
 
@@ -198,7 +198,7 @@ var tryAll = function tryAll (tokens, now) {
     parseDate(tokens); //parseDate always last
 };
 
-moment.ambit = function ambit (str, format) {
+Moment.ambit = function ambit (str, format) {
 
   var currentAttempt;
   var endRange;
@@ -257,4 +257,4 @@ moment.ambit = function ambit (str, format) {
   }
 };
 
-module.exports = moment;
+module.exports = Moment;
