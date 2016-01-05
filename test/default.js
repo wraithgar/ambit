@@ -208,4 +208,10 @@ lab.experiment('default tests', function () {
     Code.expect(result).to.equal(undefined);
     done();
   });
+  lab.test('Date crash', function (done) {
+
+    var result = Ambit.ambit('275760-09-24');
+    Code.expect(result).to.equal(undefined);
+    done();
+  });
 });
