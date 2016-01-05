@@ -13,7 +13,12 @@ var Moonbeams = require('moonbeams');
  */
 Moment.createFromInputFallback = function (config) {
 
-  config._d = new Date(config._i);
+  try {
+    config._d = new Date(config._i);
+  }
+  catch (e) {
+    config._isValid = false;
+  }
 };
 
 var SEASONS = {
