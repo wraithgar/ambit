@@ -7,7 +7,7 @@
     "url": "https://github.com/wraithgar/ambit/issues"
   },
   "dependencies": {
-    "moment": "^2.11.0",
+    "moment": "^2.11.2",
     "moonbeams": "^2.0.0"
   },
   "devDependencies": {
