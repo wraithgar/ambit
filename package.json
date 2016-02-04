@@ -1,6 +1,6 @@
 {
   "name": "ambit",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Date parser that returns a range instead of a single value",
   "author": "Michael Garvin <gar@comrade.us>",
   "bugs": {
