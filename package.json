@@ -16,7 +16,7 @@
     "eslint-config-andyet": "^1.0.0",
     "eslint-plugin-hapi": "^4.0.0",
     "git-validate": "^2.1.2",
-    "lab": "^8.0.0"
+    "lab": "^9.0.0"
   },
   "homepage": "https://github.com/wraithgar/ambit",
   "keywords": [
