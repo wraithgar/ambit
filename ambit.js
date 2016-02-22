@@ -33,7 +33,7 @@ var MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oc
 
 var YEAR_MATCH = /^(20|')?[0-9]{2}$/;
 
-var getSeason = function getSeason (now, season, year, guessYear) {
+var getSeason = function getSeason(now, season, year, guessYear) {
 
   var start;
   var end;
@@ -67,13 +67,13 @@ var getSeason = function getSeason (now, season, year, guessYear) {
 };
 
 //Very specific parser for tokens only ending in a year and nothing else
-var parseYear = function parseYear (tokens) {
+var parseYear = function parseYear(tokens) {
 
   var year;
   var end;
   var result;
   var start;
-  tokens.forEach(function findSeason (token) {
+  tokens.forEach(function findSeason(token) {
 
     if (MONTHS.indexOf(token.slice(0, 3)) > -1) {
       result = true;
@@ -100,7 +100,7 @@ var parseYear = function parseYear (tokens) {
 };
 
 //Actual month/day parser
-var monthDay = function monthDay (month, day, now) {
+var monthDay = function monthDay(month, day, now) {
 
   var year = new Date().getFullYear();
   month = MONTHS.indexOf(month.slice(0, 3));
@@ -114,7 +114,7 @@ var monthDay = function monthDay (month, day, now) {
 };
 
 //Very specific parser for tokens ending in either a month or a month/year or month/day
-var parseMonth = function parseMonth (tokens, now) {
+var parseMonth = function parseMonth(tokens, now) {
 
   var parsed;
   var start;
@@ -157,7 +157,7 @@ var parseMonth = function parseMonth (tokens, now) {
   return parsed;
 };
 
-var parseSeason = function parseSeason (tokens, now) {
+var parseSeason = function parseSeason(tokens, now) {
 
   var guessYear;
   var parsed;
@@ -184,7 +184,7 @@ var parseSeason = function parseSeason (tokens, now) {
   return parsed;
 };
 
-var parseDate = function parseDate (tokens) {
+var parseDate = function parseDate(tokens) {
 
   var parsed = {};
   parsed.start = Moment(tokens.join(' '));
@@ -195,7 +195,7 @@ var parseDate = function parseDate (tokens) {
   return parsed;
 };
 
-var tryAll = function tryAll (tokens, now) {
+var tryAll = function tryAll(tokens, now) {
 
   return parseSeason(tokens, now) ||
     parseMonth(tokens, now) ||
@@ -203,7 +203,7 @@ var tryAll = function tryAll (tokens, now) {
     parseDate(tokens); //parseDate always last
 };
 
-Moment.ambit = function ambit (str, format) {
+Moment.ambit = function ambit(str, format) {
 
   var currentAttempt;
   var endRange;
