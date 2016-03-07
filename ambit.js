@@ -188,7 +188,7 @@ var parseDate = function parseDate(tokens) {
 
   var parsed = {};
   parsed.start = Moment(tokens.join(' '));
-  if (parsed.start.toJSON() === 'null') {
+  if (parsed.start.toJSON() === null) {
     return;
   }
   parsed.end = Moment(parsed.start).add(1, 'days').subtract(1, 'seconds');
