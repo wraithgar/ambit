@@ -3,6 +3,7 @@
 Date *range* parser
 
 [![Build Status](https://travis-ci.org/wraithgar/ambit.svg?branch=master)](https://travis-ci.org/wraithgar/ambit)
+[![NSP Status](https://nodesecurity.io/orgs/wraithgar/projects/3a490a25-cae7-41e7-b06a-83fc5afdf532/badge)](https://nodesecurity.io/orgs/wraithgar/projects/3a490a25-cae7-41e7-b06a-83fc5afdf532)
 
 ### about
 So it turns out I couldn't find anything out there that parsed a date string and returned a date range.  Typically if you ask for "March" you get "March 1" instead of "March 1 through March 31"
