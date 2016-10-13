@@ -1,10 +1,10 @@
 {
-  "name": "ambit",
+  "name": "@caa/ambit",
   "version": "1.1.7",
   "description": "Date parser that returns a range instead of a single value",
   "author": "Michael Garvin <gar@comrade.us>",
   "bugs": {
-    "url": "https://github.com/wraithgar/ambit/issues"
+    "url": "https://github.com/caagency/ambit"
   },
   "dependencies": {
     "moment": "^2.12.0",
@@ -18,7 +18,7 @@
     "git-validate": "^2.1.4",
     "lab": "^11.0.0"
   },
-  "homepage": "https://github.com/wraithgar/ambit",
+  "homepage": "https://github.com/caagency/ambit",
   "keywords": [
     "date",
     "parse",
@@ -29,7 +29,7 @@
   "main": "ambit.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wraithgar/ambit.git"
+    "url": "https://github.com/caagency/ambit.git"
   },
   "scripts": {
     "test": "lab -L",
