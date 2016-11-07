@@ -49,16 +49,16 @@ var getSeason = function getSeason(now, season, year, guessYear) {
   }
   cal = Moonbeams.jdToCalendar(Moonbeams.season(endSeason, endYear));
   hms = Moonbeams.dayToHms(cal.day);
-  end = Moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+  end = Moment(new Date(cal.year, cal.month - 1, Math.floor(cal.day), hms.hour, hms.minute, hms.second));
   if (guessYear && end <= now) {
     cal = Moonbeams.jdToCalendar(Moonbeams.season(endSeason, endYear + 1));
     hms = Moonbeams.dayToHms(cal.day);
-    end = Moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+    end = Moment(new Date(cal.year, cal.month - 1, Math.floor(cal.day), hms.hour, hms.minute, hms.second));
     year = year + 1;
   }
   cal = Moonbeams.jdToCalendar(Moonbeams.season(season, year));
   hms = Moonbeams.dayToHms(cal.day);
-  start = Moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
+  start = Moment(new Date(cal.year, cal.month - 1, Math.floor(cal.day), hms.hour, hms.minute, hms.second));
   end.subtract(1, 'seconds');
   return {
     start: start,
