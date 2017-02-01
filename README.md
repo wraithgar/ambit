@@ -1,5 +1,7 @@
 #ambit
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/wraithgar/ambit.svg)](https://greenkeeper.io/)
+
 Date *range* parser
 
 [![Build Status](https://travis-ci.org/wraithgar/ambit.svg?branch=master)](https://travis-ci.org/wraithgar/ambit)
