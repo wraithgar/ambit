@@ -49,7 +49,7 @@ function getSeason(now, season, year, guessYear) {
     cal = moonbeams.jdToCalendar(moonbeams.season(season, year));
     hms = moonbeams.dayToHms(cal.day);
     start = moment(new Date(cal.year, cal.month - 1, cal.day, hms.hour, hms.minute, hms.second));
-    end.subtract('seconds', 1);
+    end.subtract(1, 'seconds');
     return {
         start: start,
         end: end
@@ -76,7 +76,7 @@ function parseYear(tokens) {
         year = Number(year) + 2000;
     }
     start = moment(new Date(Number(year), 0, 1));
-    end = moment(start).add('years', 1).subtract('seconds', 1);
+    end = moment(start).add(1, 'years').subtract(1, 'seconds');
     result = {
         start: start,
         end: end
@@ -90,10 +90,10 @@ function monthDay(month, day, now) {
     var year = new Date().getFullYear();
     month = MONTHS.indexOf(month.slice(0, 3));
     start = moment(new Date(year, month, day));
-    end = moment(start).add('days', 1).subtract('seconds', 1);
+    end = moment(start).add(1, 'days').subtract(1, 'seconds');
     if (end <= now) {
-        start.add('years', 1);
-        end.add('years', 1);
+        start.add(1, 'years');
+        end.add(1, 'years');
     }
     return {start: start, end: end};
 }
@@ -122,10 +122,10 @@ function parseMonth(tokens, now) {
         return;
     }
     start = moment(new Date(Number(year), month));
-    end = moment(start).add('months', 1).subtract('seconds', 1);
+    end = moment(start).add(1, 'months').subtract(1, 'seconds');
     if (guessYear && end <= now) {
-        start.add('years', 1);
-        end.add('years', 1);
+        start.add(1, 'years');
+        end.add(1, 'years');
     }
     parsed = {
         start: start,
@@ -187,7 +187,7 @@ function parseDate(tokens) {
     if (parsed.start.toJSON() === 'Invalid date') {
         return;
     }
-    parsed.end = moment(parsed.start).add('days', 1).subtract('seconds', 1);
+    parsed.end = moment(parsed.start).add(1, 'days').subtract(1, 'seconds');
     return parsed;
 }
 
@@ -246,7 +246,7 @@ moment.ambit = function ambit(str, format) {
         }
         //This should currently only happen w/ two un-yeared months
         if (result.start > result.end) {
-            result.end = result.end.add('years', 1);
+            result.end = result.end.add(1, 'years');
         }
         return result;
     }
