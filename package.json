@@ -16,6 +16,7 @@
     "eslint-config-andyet": "^2.0.0",
     "eslint-plugin-hapi": "^4.1.0",
     "git-validate": "^2.1.4",
+    "greenkeeper-lockfile": "^1.15.1",
     "lab": "^15.4.1"
   },
   "homepage": "https://github.com/wraithgar/ambit",
