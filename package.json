@@ -7,16 +7,16 @@
     "url": "https://github.com/wraithgar/ambit/issues"
   },
   "dependencies": {
-    "moment": "^2.22.1",
-    "moonbeams": "^2.0.0"
+    "moment": "^2.24.0",
+    "moonbeams": "^2.0.2"
   },
   "devDependencies": {
-    "code": "^5.2.0",
-    "eslint": "^5.0.0",
+    "code": "^5.2.4",
+    "eslint": "^5.13.0",
     "eslint-config-andyet": "^2.0.0",
     "eslint-plugin-hapi": "^4.1.0",
-    "git-validate": "^2.1.4",
-    "lab": "^18.0.0"
+    "git-validate": "^2.2.4",
+    "lab": "^18.0.1"
   },
   "homepage": "https://github.com/wraithgar/ambit",
   "keywords": [
