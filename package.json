@@ -11,7 +11,7 @@
     "moonbeams": "^2.0.2"
   },
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
+    "@hapi/code": "^8.0.0",
     "@hapi/lab": "^22.0.1",
     "eslint": "^6.0.0",
     "eslint-config-andyet": "^2.0.0",
