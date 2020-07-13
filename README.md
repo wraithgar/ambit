@@ -3,6 +3,7 @@
 Date *range* parser
 
 ### about
+
 So it turns out I couldn't find anything out there that parsed a date string and returned a date range.  Typically if you ask for "March" you get "March 1" instead of "March 1 through March 31"
 
 This is an attempt at doing the latter.
